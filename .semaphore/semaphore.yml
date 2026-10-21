@@ -6,16 +6,12 @@ agent:
     os_image: ubuntu2204
   containers:
     - name: main
-      image: ghcr.io/astral-sh/uv:python3.12-bookworm-slim
+      image: ghcr.io/astral-sh/uv:python3.12-bookworm
 
 blocks:
   - name: Unit tests
     dependencies: []
     task:
-      prologue:
-        commands:
-          - apt-get update
-          - apt-get install -y git
       jobs:
         - name: Run unit tests
           commands:
@@ -34,7 +30,7 @@ blocks:
       prologue:
         commands:
           - apt-get update
-          - apt-get install -y git gh
+          - apt-get install -y gh
       jobs:
         - name: Build and publish distributions
           commands:
