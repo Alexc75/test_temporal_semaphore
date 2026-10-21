@@ -44,13 +44,12 @@ blocks:
           commands:
             - checkout
             # semantic-release needs the full history and tags to compute the next version.
-            - git fetch --tags
+            - git fetch --tags || git fetch --unshallow --tags
             - git config user.name "semaphore-ci"
             - git config user.email "semaphore-ci@users.noreply.github.com"
             - uv sync --locked
             - NEXT=$(uv run --locked semantic-release version --print)
             - LAST=$(uv run --locked semantic-release version --print-last-released)
-            - echo $NEXT $LAST
             - >-
               if [ "$NEXT" = "$LAST" ]; then echo "No fix/feat commits since v$LAST, skipping release";
               else uv run --locked semantic-release version && uv run --locked semantic-release publish; fi
