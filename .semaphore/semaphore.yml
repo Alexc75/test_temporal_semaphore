@@ -86,4 +86,3 @@ blocks:
               if [ "$NEXT" = "$LAST" ]; then echo "No fix/feat commits since v$LAST, skipping release";
               else uv run --locked semantic-release version && uv run --locked semantic-release publish
               && echo "$NEXT" > release-version && artifact push workflow release-version; fi
-
