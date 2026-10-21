@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Build one image target (worker or starter) and push it tagged with the version
-# the Release block publishes for this commit.
+
+# Build one image target (worker or starter) and push it tagged with the version.
 # Usage: .semaphore/docker-image.sh <target>
 set -euo pipefail
 
