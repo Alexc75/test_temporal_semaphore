@@ -156,6 +156,42 @@ runs only for `main`. A lint or test failure prevents publishing. If `main` is
 a protected branch, allow the token's owner to push to it, or the release
 commit will be rejected.
 
+## Docker images
+
+One `Dockerfile` builds two images that share every layer except their command:
+
+| Image | Target | Runs |
+| --- | --- | --- |
+| `ghcr.io/alexc75/laugh-loop-worker` | `worker` | `python -m laugh_loop.worker` |
+| `ghcr.io/alexc75/laugh-loop-starter` | `starter` | `python -m laugh_loop.cli` |
+
+Build and run them locally, pointing at a Temporal server on the host:
+
+```bash
+docker build --target worker -t laugh-loop-worker .
+docker build --target starter -t laugh-loop-starter .
+
+docker run --rm --network host laugh-loop-worker
+docker run --rm --network host laugh-loop-starter
+```
+
+Set `TEMPORAL_ADDRESS`, `TEMPORAL_NAMESPACE`, and `TEMPORAL_TASK_QUEUE` with
+`-e` to target another server.
+
+The Semaphore **Docker images** block builds both images on every branch. When
+the Release block publishes a GitHub Release on `main`, it pushes both images
+with the same tag as the release (`v<version>`) and `latest`. Pushes to `main`
+that make no release only build the images. Pushing needs a Semaphore secret
+named `ghcr` with:
+
+- `GHCR_USERNAME`: your GitHub username.
+- `GHCR_TOKEN`: a classic GitHub personal access token with the
+  `write:packages` scope. Fine-grained tokens cannot push to GHCR.
+
+```bash
+sem create secret ghcr -e GHCR_USERNAME=<username> -e GHCR_TOKEN=<token>
+```
+
 ## Practices reflected here
 
 - Keep Workflow code deterministic and put network I/O in Activities.

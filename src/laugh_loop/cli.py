@@ -4,6 +4,7 @@ import uuid
 
 from temporalio.client import Client
 
+from .models import Joke
 from .settings import (
     TEMPORAL_ADDRESS,
     TEMPORAL_NAMESPACE,
@@ -28,6 +29,7 @@ async def run() -> None:
         "LaughWorkflow",
         id=workflow_id,
         task_queue=TEMPORAL_TASK_QUEUE,
+        result_type=list[Joke],
     )
     logger.info(
         "Started workflow %s (run_id=%s) on task queue %s; waiting for results",

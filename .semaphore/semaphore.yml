@@ -52,4 +52,33 @@ blocks:
             - LAST=$(uv run --locked semantic-release version --print-last-released)
             - >-
               if [ "$NEXT" = "$LAST" ]; then echo "No fix/feat commits since v$LAST, skipping release";
-              else uv run --locked semantic-release version && uv run --locked semantic-release publish; fi
+              else uv run --locked semantic-release version && uv run --locked semantic-release publish
+              && echo "$NEXT" > release-version && artifact push workflow release-version; fi
+
+  - name: Docker images
+    dependencies:
+      - Lint
+      - Unit tests
+    run:
+      when: "branch = 'main'"
+    task:
+      # Docker is not available inside the uv container, so build on the VM itself.
+      agent:
+        machine:
+          type: f1-standard-2
+          os_image: ubuntu2204
+      env_vars:
+        - name: IMAGE_PREFIX
+          value: ghcr.io/alexc75/laugh-loop
+      secrets:
+        - name: ghcr
+      prologue:
+        commands:
+          - checkout
+      jobs:
+        - name: Build worker and starter
+          matrix:
+            - env_var: TARGET
+              values: ["worker", "starter"]
+          commands:
+            - .semaphore/docker-image.sh "$TARGET"
