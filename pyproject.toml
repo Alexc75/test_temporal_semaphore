@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "laugh-loop"
-version = "0.1.0-rc.2"
+version = "0.1.0"
 description = "A tiny Temporal app that fetches jokes from free public APIs."
 readme = "README.md"
 requires-python = ">=3.10"
