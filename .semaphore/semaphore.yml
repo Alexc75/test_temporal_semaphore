@@ -4,9 +4,9 @@ agent:
   machine:
     type: a2-standard-4 #e1-standard-2
     os_image: ubuntu2204
-    containers:
-      - name: main
-        image: ghcr.io/astral-sh/uv:python3.12-bookworm-slim
+  containers:
+    - name: main
+      image: ghcr.io/astral-sh/uv:python3.12-bookworm-slim
 
 blocks:
   - name: Unit tests
