@@ -17,6 +17,46 @@ data.
 - [uv](https://docs.astral.sh/uv/)
 - [Temporal CLI](https://docs.temporal.io/cli)
 
+## Setup
+
+1. Install uv if it is not already available:
+
+   ```bash
+   curl -LsSf https://astral.sh/uv/install.sh | sh
+   ```
+
+2. Create the virtual environment in `.venv` and install the app with its dev
+   tools (Ruff and python-semantic-release) from `uv.lock`:
+
+   ```bash
+   uv sync
+   ```
+
+   uv installs a matching Python automatically if Python 3.10+ is missing.
+
+3. Check that the environment works:
+
+   ```bash
+   uv run ruff check .
+   uv run python -m unittest discover -s tests
+   ```
+
+### First release tag
+
+python-semantic-release computes the next version from the latest `v*` tag.
+Tag the current `main` once with the version in `pyproject.toml`, so the first
+automated release continues from it:
+
+```bash
+git switch main
+git pull
+git tag v0.0.0
+git push origin v0.0.0
+```
+
+After that, the Semaphore release job creates every tag. Without this tag, the
+first release job picks a version from the full commit history.
+
 ## Run locally
 
 In three terminals, from this directory:

@@ -44,7 +44,7 @@ blocks:
           commands:
             - checkout
             # semantic-release needs the full history and tags to compute the next version.
-            - git fetch --unshallow --tags || git fetch --tags
+            - git fetch --tags
             - git config user.name "semaphore-ci"
             - git config user.email "semaphore-ci@users.noreply.github.com"
             - uv sync --locked
