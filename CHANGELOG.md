@@ -2,6 +2,17 @@
 
 <!-- version list -->
 
+## v0.3.1 (2026-10-21)
+
+### Bug Fixes
+
+- Docker images push
+  ([`3467688`](https://github.com/Alexc75/test_temporal_semaphore/commit/3467688607da7f4b672fec14bb5a84ce3b9036af))
+
+- Docker images push
+  ([`1adc3e8`](https://github.com/Alexc75/test_temporal_semaphore/commit/1adc3e84b086508fc1f0b979033edfebb97e079d))
+
+
 ## v0.3.0 (2026-10-21)
 
 ### Features
