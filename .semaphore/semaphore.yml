@@ -31,12 +31,11 @@ blocks:
             - uv run --locked python -m unittest discover -s tests -v
 
   - name: Docker images
-    dependencies: []
-    # dependencies:
-    #   - Lint
-    #   - Unit tests
-    # run:
-    #   when: "branch = 'main'"
+    dependencies:
+      - Lint
+      - Unit tests
+    run:
+      when: "branch = 'main'"
     task:
       # Docker is not available inside the uv container, so build on the VM itself.
       agent:
