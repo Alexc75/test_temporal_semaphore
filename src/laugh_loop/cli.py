@@ -26,7 +26,7 @@ async def run() -> None:
     )
     workflow_id = f"laugh-loop-{uuid.uuid4()}"
     handle = await client.start_workflow(
-        LaughWorkflow.run,
+        "LaughWorkflow",
         id=workflow_id,
         task_queue=TEMPORAL_TASK_QUEUE,
     )

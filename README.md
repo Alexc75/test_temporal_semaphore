@@ -13,7 +13,7 @@ data.
 
 ## Requirements
 
-- Python 3.10+
+- Python 3.11+
 - [uv](https://docs.astral.sh/uv/)
 - [Temporal CLI](https://docs.temporal.io/cli)
 
@@ -32,7 +32,7 @@ data.
    uv sync
    ```
 
-   uv installs a matching Python automatically if Python 3.10+ is missing.
+   uv installs a matching Python automatically if Python 3.11+ is missing.
 
 3. Check that the environment works:
 
