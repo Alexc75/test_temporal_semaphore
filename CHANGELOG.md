@@ -2,6 +2,15 @@
 
 <!-- version list -->
 
+## v0.3.0 (2026-10-21)
+
+### Features
+
+- Add docker image build when creating release
+  ([#4](https://github.com/Alexc75/test_temporal_semaphore/pull/4),
+  [`64c2eef`](https://github.com/Alexc75/test_temporal_semaphore/commit/64c2eef52041f8e4962708dc9ae8e51c2bf319bf))
+
+
 ## v0.2.0 (2026-10-21)
 
 ### Features
