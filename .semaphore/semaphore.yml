@@ -44,7 +44,7 @@ blocks:
           commands:
             - checkout
             # semantic-release needs the full history and tags to compute the next version.
-            - git fetch --tags || git fetch --unshallow --tags
+            - git fetch --tags || git fetch --unshallow --tags # Semaphore clones only the last 50 commits, so if the last release tag is more than 50 commits back, semantic-release won't find it and will pick the wrong version.
             - git config user.name "semaphore-ci"
             - git config user.email "semaphore-ci@users.noreply.github.com"
             - uv sync --locked

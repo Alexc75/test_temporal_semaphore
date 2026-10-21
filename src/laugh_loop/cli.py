@@ -31,14 +31,20 @@ async def run() -> None:
         task_queue=TEMPORAL_TASK_QUEUE,
     )
     logger.info(
-        "Started workflow %s on task queue %s; waiting for results",
+        "Started workflow %s (run_id=%s) on task queue %s; waiting for results",
         handle.id,
+        handle.result_run_id,
         TEMPORAL_TASK_QUEUE,
     )
     jokes = await handle.result()
-    logger.info("Workflow %s completed with %d jokes", handle.id, len(jokes))
+    logger.info(
+        "Workflow %s (run_id=%s) completed with %d jokes",
+        handle.id,
+        handle.result_run_id,
+        len(jokes),
+    )
 
-    print("Here are today's laughs:\n")
+    print("\n\nHere are today's laughs:\n")
     for joke in jokes:
         print(f"[{joke.provider}] {joke.text}\n")
 
