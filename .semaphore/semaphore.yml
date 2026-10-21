@@ -50,6 +50,7 @@ blocks:
             - uv sync --locked
             - NEXT=$(uv run --locked semantic-release version --print)
             - LAST=$(uv run --locked semantic-release version --print-last-released)
+            - echo $NEXT $LAST
             - >-
               if [ "$NEXT" = "$LAST" ]; then echo "No fix/feat commits since v$LAST, skipping release";
               else uv run --locked semantic-release version && uv run --locked semantic-release publish; fi
