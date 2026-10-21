@@ -61,7 +61,6 @@ blocks:
           commands:
             - .semaphore/docker-image.sh "$TARGET"
 
-
   - name: Release
     dependencies:
       - Lint
