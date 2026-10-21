@@ -30,6 +30,38 @@ blocks:
             - uv sync --locked
             - uv run --locked python -m unittest discover -s tests -v
 
+  - name: Docker images
+    dependencies:
+      - Lint
+      - Unit tests
+    run:
+      when: "branch = 'main'"
+    task:
+      # Docker is not available inside the uv container, so build on the VM itself.
+      agent:
+        machine:
+          type: f1-standard-2
+          os_image: ubuntu2204
+      env_vars:
+        - name: IMAGE_PREFIX
+          value: ghcr.io/alexc75/laugh-loop
+      secrets:
+        - name: ghcr
+      prologue:
+        commands:
+          - checkout
+          # uv runs semantic-release to compute the image tag.
+          - curl -LsSf https://astral.sh/uv/0.13.3/install.sh | sh
+          - export PATH="$HOME/.local/bin:$PATH"
+      jobs:
+        - name: Build worker and starter
+          matrix:
+            - env_var: TARGET
+              values: ["worker", "starter"]
+          commands:
+            - .semaphore/docker-image.sh "$TARGET"
+
+
   - name: Release
     dependencies:
       - Lint
@@ -55,30 +87,3 @@ blocks:
               else uv run --locked semantic-release version && uv run --locked semantic-release publish
               && echo "$NEXT" > release-version && artifact push workflow release-version; fi
 
-  - name: Docker images
-    dependencies:
-      - Lint
-      - Unit tests
-    run:
-      when: "branch = 'main'"
-    task:
-      # Docker is not available inside the uv container, so build on the VM itself.
-      agent:
-        machine:
-          type: f1-standard-2
-          os_image: ubuntu2204
-      env_vars:
-        - name: IMAGE_PREFIX
-          value: ghcr.io/alexc75/laugh-loop
-      secrets:
-        - name: ghcr
-      prologue:
-        commands:
-          - checkout
-      jobs:
-        - name: Build worker and starter
-          matrix:
-            - env_var: TARGET
-              values: ["worker", "starter"]
-          commands:
-            - .semaphore/docker-image.sh "$TARGET"
