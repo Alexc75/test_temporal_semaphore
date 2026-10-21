@@ -9,7 +9,6 @@ from .settings import (
     TEMPORAL_NAMESPACE,
     TEMPORAL_TASK_QUEUE,
 )
-from .workflows import LaughWorkflow
 
 logger = logging.getLogger(__name__)
 
