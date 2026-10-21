@@ -44,11 +44,6 @@ uv build
 match = "main"
 prerelease = false
 
-[tool.semantic_release.branches.other]
-match = "^(?!main$).+"
-prerelease = true
-prerelease_token = "rc"
-
 
 [tool.semantic_release.remote]
 type = "github"
