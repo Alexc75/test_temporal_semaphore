@@ -11,7 +11,6 @@ from .settings import (
 )
 from .workflows import LaughWorkflow
 
-
 logger = logging.getLogger(__name__)
 
 

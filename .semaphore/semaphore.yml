@@ -9,6 +9,17 @@ agent:
       image: ghcr.io/astral-sh/uv:python3.12-bookworm
 
 blocks:
+  - name: Lint
+    dependencies: []
+    task:
+      jobs:
+        - name: Ruff
+          commands:
+            - checkout
+            - uv sync --locked
+            - uv run --locked ruff check .
+            - uv run --locked ruff format --check .
+
   - name: Unit tests
     dependencies: []
     task:
@@ -19,24 +30,26 @@ blocks:
             - uv sync --locked
             - uv run --locked python -m unittest discover -s tests -v
 
-  - name: Publish GitHub Release
+  - name: Release
     dependencies:
+      - Lint
       - Unit tests
-    # run:
-    #   when: "branch = 'main'"
+    run:
+      when: "branch = 'main'"
     task:
       secrets:
         - name: github-release
-      prologue:
-        commands:
-          - apt-get update
-          - apt-get install -y gh
       jobs:
-        - name: Build and publish distributions
+        - name: Bump version and publish GitHub Release
           commands:
             - checkout
-            - uv build
+            # semantic-release needs the full history and tags to compute the next version.
+            - git fetch --unshallow --tags || git fetch --tags
+            - git config user.name "semaphore-ci"
+            - git config user.email "semaphore-ci@users.noreply.github.com"
+            - uv sync --locked
+            - NEXT=$(uv run --locked semantic-release version --print)
+            - LAST=$(uv run --locked semantic-release version --print-last-released)
             - >-
-              gh release create "main-$(git rev-parse --short=12 HEAD)" dist/*
-              --title "Laugh Loop main-$(git rev-parse --short=12 HEAD)"
-              --notes "Automated release for commit $(git rev-parse HEAD)."
+              if [ "$NEXT" = "$LAST" ]; then echo "No fix/feat commits since v$LAST, skipping release";
+              else uv run --locked semantic-release version && uv run --locked semantic-release publish; fi

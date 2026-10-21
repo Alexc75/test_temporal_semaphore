@@ -50,22 +50,71 @@ the `laugh-loop` task queue by default. Override these with
 uv run python -m unittest discover -s tests -v
 ```
 
+## Lint
+
+[Ruff](https://docs.astral.sh/ruff/) checks and formats the code:
+
+```bash
+uv run ruff check .
+uv run ruff format --check .
+```
+
+Run `uv run ruff check --fix .` and `uv run ruff format .` to apply fixes.
+
 ## CI/CD with Semaphore
 
-The Semaphore pipeline runs the test suite for every push. After tests pass on
-`main`, it builds a wheel and source distribution and publishes them as a
-GitHub Release tagged `main-<commit-sha>`.
+The Semaphore pipeline runs the linter and the test suite for every push.
+After both pass on `main`,
+[python-semantic-release](https://python-semantic-release.readthedocs.io/)
+picks the next version from the
+[Conventional Commits](https://www.conventionalcommits.org/) messages since the
+last release:
+
+| Commit message                                      | Version bump      |
+| --------------------------------------------------- | ----------------- |
+| `fix: ...`, `perf: ...`                             | `0.1.0` → `0.1.1` |
+| `feat: ...`                                         | `0.1.0` → `0.2.0` |
+| `feat!: ...` or a `BREAKING CHANGE:` footer         | `0.1.0` → `1.0.0` |
+| `chore:`, `docs:`, `test:`, `ci:`, `refactor:`, ... | no release        |
+
+When a bump is due, the release job updates `version` in `pyproject.toml` and
+`uv.lock`, updates `CHANGELOG.md`, commits them as
+`chore(release): <version> [skip ci]`, tags the commit `v<version>`, pushes to
+`main`, and publishes a GitHub Release with the wheel and source distribution.
+
+Preview the next version locally (on `main`) without changing anything:
+
+```bash
+uv run semantic-release --noop version --print
+```
 
 To enable releases:
 
 1. Connect this GitHub repository to Semaphore and use
    `.semaphore/semaphore.yml` as the pipeline configuration.
-2. Add a project secret named `github-release` with a `GH_TOKEN` environment
-   variable. The token needs permission to create GitHub Releases and upload
-   release assets (`Contents: write` for a fine-grained token).
+2. Create a GitHub token for the release job. In GitHub, open
+   **Settings → Developer settings → Personal access tokens → Fine-grained
+   tokens → Generate new token**, then:
+   - Set **Repository access** to **Only select repositories** and pick this
+     repository.
+   - Under **Repository permissions**, set **Contents** to **Read and write**.
+     This lets the job push the release commit and tag, create releases, and
+     upload the `dist/*` files.
+3. Add a Semaphore secret named `github-release` with a `GH_TOKEN`
+   environment variable set to that token.
+   - In the UI: **Organization → Settings → Secrets → New Secret**. You can
+     also create it as a project secret under **Project → Settings →
+     Secrets**.
+   - With the `sem` CLI:
+
+     ```bash
+     sem create secret github-release -e GH_TOKEN=<token>
+     ```
 
 The release secret is only made available to the publish job, and that job
-runs only for `main`. A test failure prevents publishing.
+runs only for `main`. A lint or test failure prevents publishing. If `main` is
+a protected branch, allow the token's owner to push to it, or the release
+commit will be rejected.
 
 ## Practices reflected here
 
