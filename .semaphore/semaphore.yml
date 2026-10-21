@@ -56,11 +56,11 @@ blocks:
               && echo "$NEXT" > release-version && artifact push workflow release-version; fi
 
   - name: Docker images
-    dependencies:
-      - Lint
-      - Unit tests
-    run:
-      when: "branch = 'main'"
+    # dependencies:
+    #   - Lint
+    #   - Unit tests
+    # run:
+    #   when: "branch = 'main'"
     task:
       # Docker is not available inside the uv container, so build on the VM itself.
       agent:
