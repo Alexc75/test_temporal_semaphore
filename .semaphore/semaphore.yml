@@ -50,6 +50,9 @@ blocks:
       prologue:
         commands:
           - checkout
+          # uv runs semantic-release to compute the image tag.
+          - curl -LsSf https://astral.sh/uv/0.13.3/install.sh | sh
+          - export PATH="$HOME/.local/bin:$PATH"
       jobs:
         - name: Build worker and starter
           matrix:
@@ -81,6 +84,5 @@ blocks:
             - LAST=$(uv run --locked semantic-release version --print-last-released)
             - >-
               if [ "$NEXT" = "$LAST" ]; then echo "No fix/feat commits since v$LAST, skipping release";
-              else uv run --locked semantic-release version && uv run --locked semantic-release publish
-              && echo "$NEXT" > release-version && artifact push workflow release-version; fi
+              else uv run --locked semantic-release version && uv run --locked semantic-release publish; fi
 
