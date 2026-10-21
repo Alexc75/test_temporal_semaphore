@@ -75,7 +75,8 @@ blocks:
           commands:
             - checkout
             # semantic-release needs the full history and tags to compute the next version.
-            - git fetch --tags || git fetch --unshallow --tags # Semaphore clones only the last 50 commits, so if the last release tag is more than 50 commits back, semantic-release won't find it and will pick the wrong version.
+            # Semaphore clones only the last 50 commits; --unshallow fails on a full clone.
+            - git fetch --unshallow --tags || git fetch --tags
             - git config user.name "semaphore-ci"
             - git config user.email "semaphore-ci@users.noreply.github.com"
             - uv sync --locked
@@ -83,5 +84,4 @@ blocks:
             - LAST=$(uv run --locked semantic-release version --print-last-released)
             - >-
               if [ "$NEXT" = "$LAST" ]; then echo "No fix/feat commits since v$LAST, skipping release";
-              else uv run --locked semantic-release version && uv run --locked semantic-release publish
-              && echo "$NEXT" > release-version && artifact push workflow release-version; fi
+              else uv run --locked semantic-release version && uv run --locked semantic-release publish; fi
