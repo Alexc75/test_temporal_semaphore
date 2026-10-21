@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v0.1.0-rc.2 (2026-10-21)
+
+### Features
+
+- Improve logs
+  ([`c3746e1`](https://github.com/Alexc75/test_temporal_semaphore/commit/c3746e1ab21b02b3a316fa9948eda9104befbb86))
+
+
 ## v0.1.0-rc.1 (2026-10-21)
 
 ### Bug Fixes
