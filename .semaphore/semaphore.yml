@@ -34,8 +34,8 @@ blocks:
     dependencies:
       - Lint
       - Unit tests
-    run:
-      when: "branch = 'main'"
+    # run:
+    #   when: "branch = 'main'"
     task:
       secrets:
         - name: github-release
